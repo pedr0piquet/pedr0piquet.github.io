@@ -25,16 +25,30 @@
       <input type="text" id="num" placeholder="Ex: 42" autocomplete="off" />
     </div>
 
-    <div class="row">
-      <div class="field">
-        <label>Marca</label>
-        <input type="text" id="marca" placeholder="Ex: Toyota" autocomplete="off" />
-      </div>
-      <div class="field">
-        <label>Modelo</label>
-        <input type="text" id="modelo" placeholder="Ex: Corolla" autocomplete="off" />
-      </div>
+      <div class="row">
+    <div class="field">
+      <label>Marca</label>
+      <select id="marca" onchange="onMarcaChange()">
+        <option value="">Selecione</option>
+        <option value="Fiat">Fiat</option>
+        <option value="Volkswagen">Volkswagen</option>
+        <option value="Chevrolet">Chevrolet</option>
+        <option value="Toyota">Toyota</option>
+        <option value="Hyundai">Hyundai</option>
+        <option value="Nissan">Nissan</option>
+        <option value="Renault">Renault</option>
+        <option value="outro">Outro...</option>
+      </select>
+      <input type="text" id="marca-outro" class="outro-input" placeholder="Digite a marca" autocomplete="off" />
     </div>
+
+  <div class="field">
+    <label>Modelo</label>
+    <select id="modelo" disabled onchange="onModeloChange()">
+      <option value="">Selecione a marca</option>
+    </select>
+    <input type="text" id="modelo-outro" class="outro-input" placeholder="Digite o modelo" autocomplete="off" />
+  </div>
 
     <div class="field">
       <label>Cor</label>
@@ -60,11 +74,13 @@
 
 </div>
 
+</div>
 <script>
   // ─── CONFIGURAÇÃO ─────────────────────────────────────────────────────────
   // Troque pelo número do porteiro com DDI (só números, sem espaços ou sinais)
   const NUMERO_PORTEIRO = "5521970785219";
 
+  // Adicione o carro que quiser
   const CARROS = {
   "Fiat":       ["Argo", "Cronos", "Grand Siena", "Mobi"],
   "Volkswagen": ["Fox", "Polo", "Virtus"],
@@ -76,18 +92,81 @@
 };
   // ──────────────────────────────────────────────────────────────────────────
 
+  function onMarcaChange() {
+    const marcaSelect  = document.getElementById('marca');
+    const marcaOutro   = document.getElementById('marca-outro');
+    const modeloSelect = document.getElementById('modelo');
+    const modeloOutro  = document.getElementById('modelo-outro');
+    const val          = marcaSelect.value;
+
+    // toggle "outro" text input for marca
+    marcaOutro.style.display = val === 'outro' ? 'block' : 'none';
+
+    // reset modelo
+    modeloSelect.innerHTML = '';
+    modeloOutro.style.display = 'none';
+    modeloSelect.style.display = 'block';
+
+    if (val === '') {
+        modeloSelect.innerHTML = '<option value="">Selecione primeiro a marca</option>';
+        modeloSelect.disabled = true;
+    } else if (val === 'outro') {
+        modeloSelect.style.display = 'none';
+        modeloOutro.style.display = 'block';
+    } else {
+      modeloSelect.disabled = false;
+      modeloSelect.innerHTML = '<option value="">Selecione</option>';
+      CARROS[val].forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        modeloSelect.appendChild(opt);
+      });
+      // add "Outro..." at the end
+      const outro = document.createElement('option');
+      outro.value = 'outro';
+      outro.textContent = 'Outro...';
+      modeloSelect.appendChild(outro);
+    }
+
+    updatePreview();
+  }
+
+  function onModeloChange() {
+    const modeloSelect = document.getElementById('modelo');
+    const modeloOutro  = document.getElementById('modelo-outro');
+    modeloOutro.style.display = modeloSelect.value === 'outro' ? 'block' : 'none';
+    updatePreview();
+  }
+
+  // returns the effective value of a select, falling back to its "outro" input
+  function getVal(selectId, outroId) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return document.getElementById(outroId).value.trim();
+    return sel.value === 'outro'
+      ? document.getElementById(outroId).value.trim()
+      : sel.value;
+  }
+
   function buildMsg() {
-    const nome   = document.getElementById('nome').value.trim();
-    const num    = document.getElementById('num').value.trim();
-    const marca  = document.getElementById('marca').value.trim();
-    const modelo = document.getElementById('modelo').value.trim();
-    const cor    = document.getElementById('cor').value.trim();
-    const eta    = document.getElementById('eta').value.trim();
+    const nome  = document.getElementById('nome').value.trim();
+    const num   = document.getElementById('num').value.trim();
+    const marca = document.getElementById('marca').value === 'outro'
+      ? document.getElementById('marca-outro').value.trim()
+      : document.getElementById('marca').value;
+    const modeloSelect = document.getElementById('modelo');
+    const modelo = modeloSelect.style.display === 'none'
+      ? document.getElementById('modelo-outro').value.trim()
+      : (modeloSelect.value === 'outro'
+          ? document.getElementById('modelo-outro').value.trim()
+          : modeloSelect.value);
+    const cor   = document.getElementById('cor').value.trim();
+    const eta   = document.getElementById('eta').value.trim();
 
     if (!nome && !num && !marca && !modelo && !cor) return null;
 
-    let msg = `O Uber ${nome || '[nome]'} vai entrar para a casa ${num || '[num]'} num ${marca || '[marca]'} ${modelo || '[modelo]'} ${cor || '[cor]'}`;
-    if (eta) msg += ` em aproximadamente ${eta}`;
+    let msg = `O uber ${nome || '[nome]'} vai entrar para a casa ${num || '[num]'} num ${marca || '[marca]'} ${modelo || '[modelo]'} ${cor || '[cor]'}`;
+    if (eta) msg += ` em aproximadamente ${eta} minutos`;
     msg += '.';
     return msg;
   }
@@ -103,16 +182,26 @@
     }
   }
 
-  ['nome','num','marca','modelo','cor','eta'].forEach(id => {
+  ['nome', 'num', 'cor', 'eta', 'marca-outro', 'modelo-outro'].forEach(id => {
     document.getElementById(id).addEventListener('input', updatePreview);
   });
 
   function enviar() {
-    const campos = ['nome','num','marca','modelo','cor'];
-    const vazio  = campos.some(id => !document.getElementById(id).value.trim());
-    const erro   = document.getElementById('erro');
+    const nome  = document.getElementById('nome').value.trim();
+    const num   = document.getElementById('num').value.trim();
+    const marca = document.getElementById('marca').value === 'outro'
+      ? document.getElementById('marca-outro').value.trim()
+      : document.getElementById('marca').value;
+    const modeloSelect = document.getElementById('modelo');
+    const modelo = modeloSelect.style.display === 'none'
+      ? document.getElementById('modelo-outro').value.trim()
+      : (modeloSelect.value === 'outro'
+          ? document.getElementById('modelo-outro').value.trim()
+          : modeloSelect.value);
+    const cor  = document.getElementById('cor').value.trim();
+    const erro = document.getElementById('erro');
 
-    if (vazio) {
+    if (!nome || !num || !marca || !modelo || !cor) {
       erro.style.display = 'block';
       return;
     }
