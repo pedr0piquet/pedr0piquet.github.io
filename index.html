@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site do Pedro</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body id="body" class="dark">
+
+    <nav>
+        <a href="#projects">Projetos</a>
+        <a href="#contact">Contato</a>
+        <button onclick="toggleMode()" id="theme-btn">☀ Light</button>
+    </nav>
+
+    <section id="hero">
+        <div class="intro-text">
+            <p>Olá, me chamo <span class="highlight">Pedro Piquet Fernandes de Sousa</span>.</p>
+            <p>Sou um desenvolvedor web com interesse em criar experiências virtuais simples e agradáveis.</p>
+            <p>Confira meus <a href="#projects">projetos</a> abaixo.</p>
+        </div>
+
+        <div class="code-block">
+            <div class="code-row">
+                <span class="key">Localização</span>
+                <span class="value string">"Niterói, RJ"</span>
+            </div>
+            <div class="code-row">
+                <span class="key">Contato</span>
+                <span class="value array">[<a href="mailto:pedro.piquet11@email.com">"pedro.piquet11@email.com"</a>, <a href="https://github.com/pedr0piquet" target="_blank">"GitHub"</a>]</span>
+            </div>
+            <div class="code-row">
+                <span class="key">Interesses</span>
+                <span class="value array">["web-design", "data-science"]</span>
+            </div>
+            <div class="code-row">
+                <span class="key">Tecnologias</span>
+                <span class="value array">["HTML", "CSS", "JavaScript",  "Python", "Java", "C"]</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2>// Projetos</h2>
+
+        <div class="project-card">
+            <div class="project-info">
+                <h3>Uber para Porteiro</h3>
+                <p>Ferramenta desenvolvida orientada a preguiça que formata uma mensagem sobre um Uber chegando e envia para o porteiro via WhatsApp. 
+                    Dropdowns encadeados de marca/modelo, com fallback de texto livre.</p>
+                <div class="tags">
+                    <span class="tag">HTML5</span>
+                    <span class="tag">CSS3</span>
+                    <span class="tag">JavaScript</span>
+                </div>
+
+                <div class="project-links">
+                    <a href="https://pedr0piquet.github.io/avisar-porteiro/" target="_blank">Link</a>
+                    <a href="https://github.com/pedr0piquet/avisar-porteiro" target="_blank">Ver Código</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-info">
+                <h3>Tiragem de tarot</h3>
+                <p>Ferramenta desenvolvida para praticar o JavaScript e o carregamento de imagens com construção de links dinâmicos dos paths das 78 cartas de um deck. </p>
+                <p>O que as cartas dizem sobre o seu destino? Faça uma tiragem abaixo.</p>
+                <div class="tags">
+                    <span class="tag">HTML5</span>
+                    <span class="tag">CSS3</span>
+                    <span class="tag">JavaScript</span>
+                </div>
+
+                <div class="project-links">
+                    <a href="https://pedr0piquet.github.io/tarot-project/" target="_blank">Link</a>
+                    <a href="https://github.com/pedr0piquet/tarot-project" target="_blank">Ver Código</a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer id="contact">
+        <p>
+            <a href="mailto:pedro.piquet11@email.com" target="_blank">Email</a>
+            &nbsp;·&nbsp;
+            <a href="https://github.com/pedr0piquet" target="_blank">GitHub</a>
+        </p>
+        <p class="footer-credit">Feito por Pedro © 2025</p>
+    </footer>
+
+</body>
+</html>
